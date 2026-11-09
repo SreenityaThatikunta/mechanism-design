@@ -30,8 +30,20 @@ BIDDER1_VALUES = (0.2, 0.5, 0.8)
 #: Fixed rival bids used for the dominance check in part 1B.
 FIXED_RIVAL_BIDS = (0.1, 0.4, 0.9)
 
-#: Shading grid for part 2: bidder 1 bids k * v.
-K_GRID = np.round(np.arange(0.1, 2.0 + 1e-9, 0.05), 10)
-
 #: Bidder counts for part 2.
 N_BIDDERS = (2, 3, 4)
+
+#: Shading grid for part 2: bidder 1 bids k * v, with k from 0.1 to 2.0.
+#:
+#: The regular 0.05 step is unioned with the exact equilibrium shading factors
+#: (n-1)/n for each n. Without that, 2/3 is simply absent from the grid and the
+#: n = 3 peak would read as 0.65 -- an artifact of grid resolution rather than a
+#: real result. Including them lets the simulated argmax land on the true
+#: optimum, which is the whole point of the sweep.
+_EQUILIBRIUM_K = tuple((n - 1) / n for n in N_BIDDERS)
+K_GRID = np.unique(
+    np.round(
+        np.concatenate([np.arange(0.1, 2.0 + 1e-9, 0.05), np.array(_EQUILIBRIUM_K)]),
+        10,
+    )
+)

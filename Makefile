@@ -19,3 +19,6 @@ results:
 
 clean:
 	rm -rf docs/figures/*.png docs/tables/*.csv .pytest_cache .ruff_cache
+
+serve:
+	$(PY) -m http.server -d docs 8000

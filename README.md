@@ -10,8 +10,12 @@ Every simulated curve is checked against a closed-form expression derived by han
 plot both on the same axes, so agreement between a 200,000-auction simulation and a formula is
 visible rather than merely claimed.
 
+**[→ Interactive demo](https://sreenitya.in)** — explore the curves, drag a bidder's strategy,
+and watch the VCG mechanism recompute payments live as an agent lies about its cost.
+
 ```bash
 make install && make results && make test
+make serve                   # interactive page at http://localhost:8000
 ```
 
 ---
@@ -226,6 +230,8 @@ Other choices worth naming:
   ordering.
 - **Grid resolution.** The shading grid unions in the exact factors `(n−1)/n`; on a plain 0.05
   grid, `2/3` is absent and the n = 3 optimum would read as 0.65 — a grid artifact, not a result.
+- **Reproducible to the byte.** CI reruns the whole pipeline and fails if anything in `docs/`
+  differs from what is committed, so the figures can never drift from the code that made them.
 
 ---
 
@@ -242,7 +248,9 @@ src/mechanism_design/
 └── cli.py           reproducible pipeline
 tests/               103 tests, asserted against exact theory
 docs/
-├── index.html       static results page
+├── index.html       interactive results page
+├── app.js           charts + in-browser VCG
+├── data.json        compact simulation output for the page
 ├── figures/         generated PNGs
 └── tables/          generated CSVs
 ```
@@ -253,6 +261,7 @@ docs/
 | `make results` | regenerate every figure and table (~4 s) |
 | `make test` | run the test suite |
 | `make lint` | run ruff |
+| `make serve` | serve the interactive page locally |
 | `python -m mechanism_design.cli part2` | run one part on its own |
 
 ---

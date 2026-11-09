@@ -1,0 +1,9 @@
+edge,true_cost,on_chosen_path,shortest_path_without_edge,cost_without_edge,payment,utility
+AB,3,True,ACEF,6,4,1
+AC,2,False,ABEF,5,0,0
+BD,2,False,ABEF,5,0,0
+BE,1,True,ACEF,6,2,1
+CE,3,False,ABEF,5,0,0
+CF,5,False,ABEF,5,0,0
+DF,2,False,ABEF,5,0,0
+EF,1,True,ABDF,7,3,2

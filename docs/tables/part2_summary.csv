@@ -1,0 +1,4 @@
+n_bidders,equilibrium_k,simulated_best_k,exact_best_k,utility_at_equilibrium,exact_utility_at_equilibrium,utility_at_truthful_k1,could_have_paid_less_at_eq,mean_overpayment_at_eq,mean_overpayment_pct_at_eq
+2,0.5000,0.5000,0.5000,0.166455,0.166667,0.000000,1.000000,0.166434,0.499447
+3,0.6667,0.6667,0.6667,0.083307,0.083333,0.000000,1.000000,0.166504,0.333106
+4,0.7500,0.7500,0.7500,0.049867,0.050000,0.000000,1.000000,0.150172,0.250356

@@ -99,7 +99,7 @@ def shortest_path(
         if node in settled:
             continue
         if node == sink:
-            edges = tuple(edge_key(a, b) for a, b in zip(nodes, nodes[1:]))
+            edges = tuple(edge_key(a, b) for a, b in zip(nodes, nodes[1:], strict=False))
             return PathResult(cost=cost, nodes=nodes, edges=edges)
         settled.add(node)
         for neighbour, step in adjacency.get(node, []):

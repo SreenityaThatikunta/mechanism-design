@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mechanism Design — Sreenitya Thatikunta</title>
+<meta name="description" content="Interactive study of second-price, first-price and VCG auctions: when does a mechanism make honesty the best strategy?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080a0c; --panel:#0e1116; --panel-2:#12161c; --line:#1f2630;
+  --text:#f2f2f2; --muted:#c0c5ce; --dim:#8b94a3;
+  --accent:#a273f2; --accent-dim:#7d53c7;
+  --blue:#5aa9e6; --green:#4fd1b5; --red:#f2708a;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Lora,Georgia,serif; font-size:17px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px; margin:0 auto; padding:0 24px}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent)}
+code,.mono{font-family:var(--mono); font-size:.88em; white-space:nowrap}
+
+header{padding:76px 0 44px; border-bottom:1px solid var(--line)}
+h1{font-size:clamp(30px,5.2vw,46px); line-height:1.2; margin:0 0 14px; font-weight:600; letter-spacing:-.01em}
+.lede{color:var(--muted); font-size:clamp(17px,2.3vw,20px); margin:0 0 26px; max-width:68ch}
+.links{display:flex; gap:10px; flex-wrap:wrap; font-family:var(--mono); font-size:13px}
+.links a{
+  border:1px solid var(--line); border-radius:7px; padding:7px 13px;
+  color:var(--muted); background:var(--panel); transition:.15s;
+}
+.links a:hover{border-color:var(--accent); color:var(--accent); background:var(--panel-2)}
+
+section{padding:56px 0; border-bottom:1px solid var(--line)}
+.marker{font-family:var(--mono); font-size:14px; color:var(--accent); margin:0 0 10px; letter-spacing:.02em}
+h2{font-size:clamp(23px,3.4vw,30px); margin:0 0 8px; font-weight:600; letter-spacing:-.01em}
+h3{font-size:19px; margin:34px 0 8px; font-weight:600}
+p{margin:0 0 16px; color:var(--muted); max-width:72ch}
+strong{color:var(--text); font-weight:600}
+.sub{color:var(--dim); font-size:15px}
+
+.verdicts{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); margin-top:26px}
+.verdict{background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:20px}
+.verdict .tag{font-family:var(--mono); font-size:11.5px; color:var(--dim); letter-spacing:.09em; text-transform:uppercase}
+.verdict .ans{font-size:19px; font-weight:600; margin:9px 0 7px}
+.yes{color:var(--green)} .no{color:var(--red)}
+.verdict p{font-size:14.5px; margin:0; line-height:1.6}
+
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:22px; margin:26px 0}
+.controls{display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; margin-bottom:20px}
+.ctl{display:flex; flex-direction:column; gap:7px}
+.ctl label{font-family:var(--mono); font-size:11.5px; color:var(--dim); letter-spacing:.07em; text-transform:uppercase}
+.seg{display:flex; border:1px solid var(--line); border-radius:7px; overflow:hidden}
+.seg button{
+  font-family:var(--mono); font-size:13px; padding:7px 13px; cursor:pointer;
+  background:var(--panel-2); color:var(--muted); border:0; border-right:1px solid var(--line); transition:.12s;
+}
+.seg button:last-child{border-right:0}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{background:var(--accent); color:#120b1f; font-weight:700}
+input[type=range]{width:230px; accent-color:var(--accent); cursor:pointer}
+
+.readout{display:flex; gap:26px; flex-wrap:wrap; font-family:var(--mono); font-size:13px; margin-top:16px;
+  padding-top:16px; border-top:1px solid var(--line)}
+.readout div{display:flex; flex-direction:column; gap:3px}
+.readout .k{color:var(--dim); font-size:11px; letter-spacing:.07em; text-transform:uppercase}
+.readout .v{color:var(--text); font-size:16px; font-weight:500}
+
+svg{display:block; width:100%; height:auto; overflow:visible}
+.axis{stroke:var(--line); stroke-width:1}
+.tick{fill:var(--dim); font-family:var(--mono); font-size:10.5px}
+.axlab{fill:var(--dim); font-family:var(--mono); font-size:11px}
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--dim); margin-top:12px}
+.legend span{display:flex; align-items:center; gap:7px}
+.sw{width:15px; height:3px; border-radius:2px; display:inline-block}
+.sw.dot{width:7px; height:7px; border-radius:50%}
+
+table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:13.5px; margin:18px 0}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line)}
+th{color:var(--dim); font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; font-weight:500}
+td{color:var(--muted)} td strong{color:var(--text)}
+
+figure{margin:26px 0}
+figure img{width:100%; border-radius:10px; background:#fff; padding:10px; border:1px solid var(--line)}
+figcaption{color:var(--dim); font-size:14px; margin-top:10px}
+
+.note{border-left:2px solid var(--accent-dim); padding:2px 0 2px 16px; margin:22px 0}
+.note p{font-size:15px; margin:0; color:var(--dim)}
+
+footer{padding:44px 0 72px; color:var(--dim); font-size:14px}
+footer p{color:var(--dim); font-size:14px}
+.err{color:var(--red); font-family:var(--mono); font-size:13.5px}
+@media (max-width:620px){
+  body{font-size:16px}
+  .controls{gap:16px}
+  input[type=range]{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>When is honesty the best policy?</h1>
+    <p class="lede">
+      Three auction mechanisms, simulated 200,000 times per bid and checked against closed-form
+      theory. Two of them reward telling the truth. One punishes it. The difference comes down
+      to a single design choice.
+    </p>
+    <div class="links">
+      <a href="https://sreenitya.in">← sreenitya.in</a>
+      <a href="https://github.com/SreenityaThatikunta/mechanism-design">source on github</a>
+      <a href="#part-1">second-price</a>
+      <a href="#part-2">first-price</a>
+      <a href="#part-3">vcg</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="marker">&gt; the-question</p>
+    <h2>Does the mechanism reward truth?</h2>
+    <p>
+      An auction is a machine for turning private information into a decision. Bidders know what
+      something is worth to them; the auctioneer does not. A <strong>strategyproof</strong>
+      mechanism is one where the best thing a bidder can do is simply say what it knows — no
+      guessing about rivals, no strategy at all. Not every auction has this property.
+    </p>
+    <div class="verdicts">
+      <div class="verdict">
+        <div class="tag">Part 1 · Second-price</div>
+        <div class="ans yes">Yes — weakly dominant</div>
+        <p>Your bid decides <em>whether</em> you win, never <em>what you pay</em>. Bidding your
+        true value is the only bid that is optimal against every rival bid.</p>
+      </div>
+      <div class="verdict">
+        <div class="tag">Part 2 · First-price</div>
+        <div class="ans no">No — truth earns zero</div>
+        <p>You pay your own bid, so bidding your value hands over your entire surplus. The
+        optimum is to shade down to (n−1)/n of it.</p>
+      </div>
+      <div class="verdict">
+        <div class="tag">Part 3 · VCG</div>
+        <div class="ans yes">Yes — dominant</div>
+        <p>Each agent is paid its marginal contribution, computed entirely from
+        <em>other</em> agents' reports. Lying cannot move your own price.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="part-1">
+  <div class="wrap">
+    <p class="marker">&gt; part-1</p>
+    <h2>Second-price sealed-bid auction</h2>
+    <p>
+      Bidder 1 holds a fixed value <code>v</code> and chooses a bid <code>b</code>. Rivals draw
+      values from U[0,1] and bid by one of three rules. The winner pays the
+      <em>highest rival bid</em>, so bidder 1's profit is <code>v − m</code>.
+    </p>
+    <p>
+      Change the value, the rival strategy and the number of rivals below. The curve moves a
+      great deal. <strong>The location of its peak never does.</strong>
+    </p>
+
+    <div class="panel">
+      <div class="controls">
+        <div class="ctl">
+          <label>bidder 1's value</label>
+          <div class="seg" id="sp-value"></div>
+        </div>
+        <div class="ctl">
+          <label>rival strategy</label>
+          <div class="seg" id="sp-strategy"></div>
+        </div>
+        <div class="ctl">
+          <label>rivals</label>
+          <div class="seg" id="sp-rivals"></div>
+        </div>
+      </div>
+      <div id="sp-chart"></div>
+      <div class="legend">
+        <span><i class="sw dot" style="background:var(--blue)"></i> simulated (200,000 auctions)</span>
+        <span><i class="sw" style="background:var(--text)"></i> closed form</span>
+        <span><i class="sw" style="background:var(--accent)"></i> b = v</span>
+      </div>
+      <div class="readout" id="sp-readout"></div>
+    </div>
+
+    <div class="note">
+      <p>
+        A rival bidding truthfully and a rival drawing a fresh U[0,1] number both produce bids
+        uniform on [0,1] — from bidder 1's side they are the same thing, which is why those two
+        settings give an identical curve. A rival that halves its value never bids above 0.5, so
+        past <code>b = 0.5</code> the curve flattens: bidder 1 already wins every auction.
+      </p>
+    </div>
+
+    <h3>Truthfulness, stated precisely</h3>
+    <p>
+      Against any <em>single</em> fixed rival bid, many bids tie for best — if the rival bids 0.1
+      and your value is 0.5, then 0.2, 0.5 and 1.0 all win and all pay 0.1. Truthfulness only
+      becomes special once you ask which bid works against <em>every</em> rival bid at once.
+    </p>
+    <figure>
+      <img src="figures/part1_dominance_profile.png" alt="Percentage of rival bids for which each bid is optimal, peaking at exactly 100% at b = v">
+      <figcaption>
+        Each curve reaches exactly 100% at <code>b = v</code> and nowhere else. Bid below your
+        value and you forfeit auctions worth winning; bid above it and you win auctions at a
+        loss. That is what <em>weakly dominant</em> means.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="part-2">
+  <div class="wrap">
+    <p class="marker">&gt; part-2</p>
+    <h2>First-price auction</h2>
+    <p>
+      Same setup, one rule changed: <strong>the winner now pays its own bid.</strong> That single
+      change destroys truthfulness. Rivals play the symmetric equilibrium
+      <code>b = ((n−1)/n)·v</code>; bidder 1 deviates by bidding <code>k·v</code>.
+    </p>
+
+    <div class="panel">
+      <div class="controls">
+        <div class="ctl">
+          <label>bidders</label>
+          <div class="seg" id="fp-n"></div>
+        </div>
+        <div class="ctl">
+          <label>shading factor k — <span class="mono" id="fp-k-val"></span></label>
+          <input type="range" id="fp-k" min="0" max="0" step="1">
+        </div>
+      </div>
+      <div id="fp-chart"></div>
+      <div class="legend">
+        <span><i class="sw dot" style="background:var(--blue)"></i> simulated</span>
+        <span><i class="sw" style="background:var(--text)"></i> closed form</span>
+        <span><i class="sw" style="background:var(--green)"></i> equilibrium k = (n−1)/n</span>
+        <span><i class="sw" style="background:var(--red)"></i> truthful k = 1</span>
+      </div>
+      <div class="readout" id="fp-readout"></div>
+    </div>
+
+    <p>
+      Drag <code>k</code> to 1.0 — truthful bidding — and the expected utility reads
+      <strong>exactly zero</strong>, for every <code>n</code>. The only auctions you win at
+      <code>k = 1</code> are the ones where you give away everything you were playing for.
+    </p>
+
+    <h3>The winner always overpays</h3>
+    <p>
+      In <strong>100%</strong> of simulated auctions the winner could have bid less and still
+      won. That is ~100% by construction — bids are continuous, so the winner almost surely
+      strictly outbid the runner-up. The informative number is the <em>size</em> of the gap,
+      and it is large: the winner pays a quarter to a half more than it needed to.
+    </p>
+    <table>
+      <thead><tr><th>n</th><th>Could have paid less</th><th>Mean overpayment</th><th>% of winning bid</th></tr></thead>
+      <tbody>
+        <tr><td>2</td><td>100.00%</td><td>0.1664</td><td><strong>49.9%</strong></td></tr>
+        <tr><td>3</td><td>100.00%</td><td>0.1665</td><td><strong>33.3%</strong></td></tr>
+        <tr><td>4</td><td>100.00%</td><td>0.1502</td><td><strong>25.0%</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="sub">
+      In a second-price auction this gap is zero by definition — the winner pays the runner-up's
+      bid exactly. That is the entire design argument for charging the second price.
+    </p>
+  </div>
+</section>
+
+<section id="part-3">
+  <div class="wrap">
+    <p class="marker">&gt; part-3</p>
+    <h2>VCG: buying the cheapest path</h2>
+    <p>
+      Now the auction is a procurement. Every <strong>edge</strong> of this network is an agent
+      with a private cost, and we need to buy a path from A to F. VCG picks the cheapest path and
+      pays each edge its <em>marginal contribution</em>: what the best path would have cost
+      without it, minus the cost of the rest of the path chosen.
+    </p>
+
+    <div class="panel">
+      <div class="controls">
+        <div class="ctl">
+          <label>edge that misreports</label>
+          <div class="seg" id="vcg-edge"></div>
+        </div>
+        <div class="ctl">
+          <label>its reported cost — <span class="mono" id="vcg-report-val"></span></label>
+          <input type="range" id="vcg-report" min="0" max="20" step="1" value="6">
+        </div>
+      </div>
+      <div id="vcg-net"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--accent)"></i> chosen path</span>
+        <span><i class="sw" style="background:var(--dim)"></i> not used</span>
+        <span><i class="sw" style="background:var(--red)"></i> outlined = the misreporting edge</span>
+      </div>
+      <div class="readout" id="vcg-readout"></div>
+    </div>
+
+    <p>
+      Everything above is recomputed live in your browser — Dijkstra plus the VCG payment rule,
+      with every other edge reporting honestly. Drag the slider and watch what the liar gets.
+    </p>
+
+    <div class="note">
+      <p>
+        With everyone honest the mechanism picks <strong>ABEF</strong> and pays AB 4, BE 2, EF 3,
+        and every other edge 0 — reproducing Figure 7.3 of Shoham &amp; Leyton-Brown exactly.
+        Note that <strong>BE and EF both cost 1, yet EF is paid 3 and BE only 2.</strong> VCG
+        prices market power, not cost: the network without EF (7) is worse than the network
+        without BE (6).
+      </p>
+    </div>
+
+    <h3>Why lying never pays</h3>
+    <p>
+      Pick <strong>AB</strong> — an edge on the path — and sweep its report. Its payment stays
+      pinned at <strong>4</strong> no matter what it says, because the payment formula contains
+      only <em>other</em> agents' costs. Under-reporting changes nothing; over-reporting past ~4
+      just prices it off the path and drops its profit from 1 to 0.
+    </p>
+    <p>
+      Now pick <strong>AC</strong>, an edge <em>off</em> the path. It can buy its way on by
+      reporting below 1 — and is then paid 1 against a true cost of 2, for a profit of
+      <strong>−1</strong>. The only way to win is to win at a loss.
+    </p>
+    <figure>
+      <img src="figures/part3_vcg_misreports.png" alt="Edge utility against reported cost for an on-path and an off-path edge">
+      <figcaption>
+        Utility against reported cost, true cost held fixed. The repository's test suite runs
+        this sweep for all eight edges and asserts truthful reporting is optimal every time.
+      </figcaption>
+    </figure>
+    <p class="sub">
+      VCG is not free: it pays out 9 in total for a path that truly costs 5. That gap is the
+      price of strategyproofness, and the reason VCG is not budget-balanced in procurement.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="marker">&gt; how-it-was-checked</p>
+    <h2>Simulation is not evidence on its own</h2>
+    <p>
+      A Monte Carlo that is only checked against another Monte Carlo can be confidently wrong.
+      Every simulated quantity here has a closed form derived by hand, and the charts plot both
+      together — the dashed line is theory, the dots are 200,000 simulated auctions each.
+    </p>
+    <table>
+      <thead><tr><th>Quantity</th><th>Closed form</th></tr></thead>
+      <tbody>
+        <tr><td>Second-price E[u(b)], k rivals on [0,s]</td><td>(t/s)<sup>k</sup> · (v − k·t/(k+1)),&nbsp; t = min(b,s)</td></tr>
+        <tr><td>First-price E[U(k)], k ≤ (n−1)/n</td><td>(1−k)·(kn/(n−1))<sup>n−1</sup> / (n+1)</td></tr>
+        <tr><td>First-price peak utility</td><td>1 / (n(n+1))</td></tr>
+        <tr><td>VCG payments</td><td>exact arithmetic on shortest paths</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Max discrepancy between simulation and theory across all 18 second-price configurations:
+      <strong>0.0016</strong>. The repository has <strong>103 tests</strong>, all asserting
+      against exact theory rather than stored snapshots.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>
+      Built by <a href="https://sreenitya.in">Sreenitya Thatikunta</a> ·
+      <a href="https://github.com/SreenityaThatikunta/mechanism-design">source</a> ·
+      Figure 7.3 and the VCG example follow Shoham &amp; Leyton-Brown,
+      <em>Multiagent Systems</em>, ch. 7.
+    </p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

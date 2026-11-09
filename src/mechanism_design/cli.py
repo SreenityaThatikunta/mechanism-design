@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Any
@@ -20,6 +21,7 @@ from . import plotting
 from .config import (
     BID_GRID,
     BIDDER1_VALUES,
+    FIGURE_DIR,
     FIXED_RIVAL_BIDS,
     K_GRID,
     N_AUCTIONS,
@@ -78,9 +80,10 @@ def _streams() -> dict[str, np.random.Generator]:
     }
 
 
-def run_part1(streams: dict[str, np.random.Generator]) -> None:
+def run_part1(streams: dict[str, np.random.Generator]) -> dict[str, Any]:
     print("\n=== Part 1 - second-price sealed-bid auction ===")
 
+    web: dict[str, Any] = {"bids": [round(float(b), 2) for b in BID_GRID], "series": {}}
     sweep_rows: list[dict[str, Any]] = []
     for n_rivals in RIVAL_COUNTS:
         rng = streams["part1_1rival" if n_rivals == 1 else "part1_2rivals"]
@@ -90,6 +93,11 @@ def run_part1(streams: dict[str, np.random.Generator]) -> None:
                 sweep = simulate_bid_sweep(value, strategy, n_rivals, rng)
                 sweeps[(value, strategy.key)] = sweep
                 exact = sp_exact(value, strategy, n_rivals)
+                web["series"][f"{n_rivals}|{value}|{strategy.key}"] = {
+                    "sim": [round(float(u), 5) for u in sweep.mean_utility],
+                    "exact": [round(float(u), 5) for u in exact],
+                    "win": [round(float(w), 4) for w in sweep.win_rate],
+                }
                 for i, bid in enumerate(sweep.bids):
                     sweep_rows.append(
                         {
@@ -171,17 +179,28 @@ def run_part1(streams: dict[str, np.random.Generator]) -> None:
         always = BID_GRID[np.isclose(profile, 1.0)]
         print(f"      v={value}: optimal against 100% of rival bids only at b = {_fmt(always)}")
 
+    return web
 
-def run_part2(streams: dict[str, np.random.Generator]) -> None:
+
+def run_part2(streams: dict[str, np.random.Generator]) -> dict[str, Any]:
     print("\n=== Part 2 - first-price auction with a deviating bidder ===")
     rng = streams["part2"]
 
+    web: dict[str, Any] = {"k": [round(float(k), 4) for k in K_GRID], "series": {}}
     sweeps = {}
     rows: list[dict[str, Any]] = []
     for n_bidders in N_BIDDERS:
         sweep = simulate_shading_sweep(n_bidders, rng)
         sweeps[n_bidders] = sweep
         exact = fp_exact(n_bidders, K_GRID)
+        web["series"][str(n_bidders)] = {
+            "sim": [round(float(u), 5) for u in sweep.mean_utility],
+            "exact": [round(float(u), 5) for u in exact],
+            "win": [round(float(w), 4) for w in sweep.win_rate],
+            "overpay_pct": [round(float(o), 4) for o in sweep.mean_overpayment_pct],
+            "equilibrium_k": round(equilibrium_shading(n_bidders), 4),
+            "peak": round(optimal_utility_exact(n_bidders), 6),
+        }
         for i, k in enumerate(sweep.k_grid):
             rows.append(
                 {
@@ -235,9 +254,10 @@ def run_part2(streams: dict[str, np.random.Generator]) -> None:
         )
 
     _write_csv("part2_summary.csv", summary)
+    return web
 
 
-def run_part3() -> None:
+def run_part3() -> dict[str, Any]:
     print("\n=== Part 3 - VCG for the cheapest path from A to F ===")
     outcome = run_vcg(FIGURE_7_3_COSTS)
     print(f"  chosen path: {outcome.chosen.label} (cost {outcome.chosen.cost:g})")
@@ -291,6 +311,14 @@ def run_part3() -> None:
     _write_csv("part3_misreports.csv", misreport_rows)
     print(f"  misreport figure: {plotting.plot_vcg_misreports(sweeps)}")
 
+    return {
+        "edges": [
+            {"u": edge[0], "v": edge[1], "cost": FIGURE_7_3_COSTS[edge]}
+            for edge in sorted(FIGURE_7_3_COSTS)
+        ],
+        "nodes": {k: list(v) for k, v in plotting.NODE_POSITIONS.items()},
+    }
+
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
@@ -309,14 +337,23 @@ def main(argv: Sequence[str] | None = None) -> int:
     streams = _streams()
     print(f"seed = {SEED}, {N_AUCTIONS:,} auctions per bid point")
 
+    web: dict[str, Any] = {}
     if args.part in ("all", "part1"):
-        run_part1(streams)
+        web["part1"] = run_part1(streams)
     if args.part in ("all", "part2"):
-        run_part2(streams)
+        web["part2"] = run_part2(streams)
     if args.part in ("all", "part3"):
-        run_part3()
+        web["part3"] = run_part3()
 
-    print("\nFigures -> docs/figures/   Tables -> docs/tables/")
+    if args.part == "all":
+        # Compact payload for the interactive page, so it plots the same numbers
+        # the figures and tables were built from rather than its own re-run.
+        data_path = FIGURE_DIR.parent / "data.json"
+        data_path.write_text(json.dumps({"seed": SEED, "n_auctions": N_AUCTIONS, **web}))
+        size_kb = data_path.stat().st_size / 1024
+        print(f"\nWeb data -> docs/data.json ({size_kb:.0f} KB)")
+
+    print("Figures -> docs/figures/   Tables -> docs/tables/")
     return 0
 
 

@@ -31,8 +31,14 @@ jobs:
       - name: Rebuild figures and tables
         run: python -m mechanism_design.cli all
 
-      - name: Check committed results are up to date
-        # The pipeline is seeded, so a rerun must reproduce the committed output
-        # byte for byte. If it does not, either the results are stale or a change
-        # altered the numbers without anyone noticing.
-        run: git diff --exit-code --stat docs/
+      - name: Check committed numbers are up to date
+        # The pipeline is seeded, so a rerun must reproduce every committed
+        # number byte for byte. If it does not, either the results are stale or
+        # a change moved the numbers without anyone noticing.
+        #
+        # Figures are deliberately excluded: matplotlib rasterises text through
+        # the platform's font stack, so a PNG built on macOS and the same PNG
+        # built on this runner differ in bytes while being identical plots.
+        # Asserting on them would fail for reasons that say nothing about
+        # correctness. The CSVs and data.json are plain text and are stable.
+        run: git diff --exit-code --stat docs/tables docs/data.json

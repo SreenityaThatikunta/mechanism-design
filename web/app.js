@@ -19,8 +19,11 @@ const TAPE_ROWS = 10;
 
 const num = (v, d = 4) => {
   if (!isFinite(v)) return "∞";
-  const s = v.toFixed(d);
-  return s.replace(/\.?0+$/, "") || "0";
+  let s = v.toFixed(d);
+  // Only ever trim zeros that sit after a decimal point. Trimming unconditionally
+  // turns 2900 into 29 and 5970 into 597, which is how this shipped at first.
+  if (s.includes(".")) s = s.replace(/0+$/, "").replace(/\.$/, "");
+  return s === "-0" ? "0" : s;
 };
 const pct = (v, d = 1) => `${(100 * v).toFixed(d)}%`;
 

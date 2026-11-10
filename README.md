@@ -10,8 +10,10 @@ Every simulated curve is checked against a closed-form expression derived by han
 plot both on the same axes, so agreement between a 200,000-auction simulation and a formula is
 visible rather than merely claimed.
 
-**[→ Interactive demo](https://sreenitya.in)** — explore the curves, drag a bidder's strategy,
-and watch the VCG mechanism recompute payments live as an agent lies about its cost.
+**[→ Interactive demo](https://sreenitya.in)** — pick a mechanism and a bid, then run 100,000
+auctions in your browser. The same rival draws are replayed against honest bidding, so you always
+see what telling the truth would have earned on exactly the run you just played. In the
+second-price auction you cannot beat it; in the first-price auction honesty earns you nothing.
 
 ```bash
 make install && make results && make test
@@ -251,9 +253,9 @@ src/mechanism_design/
 └── cli.py           reproducible pipeline
 tests/               103 tests, asserted against exact theory
 docs/
-├── index.html       interactive results page
-├── app.js           charts + in-browser VCG
-├── data.json        compact simulation output for the page
+├── index.html       interactive page (Playground / VCG / Results / How it works)
+├── app.js           in-browser Monte Carlo, charts, Dijkstra + VCG
+├── data.json        pipeline output the Results tab renders from
 ├── figures/         generated PNGs
 └── tables/          generated CSVs
 ```

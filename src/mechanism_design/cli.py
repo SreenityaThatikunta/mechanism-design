@@ -193,6 +193,7 @@ def run_part2(streams: dict[str, np.random.Generator]) -> dict[str, Any]:
         sweep = simulate_shading_sweep(n_bidders, rng)
         sweeps[n_bidders] = sweep
         exact = fp_exact(n_bidders, K_GRID)
+        at_eq = int(np.argmin(np.abs(K_GRID - equilibrium_shading(n_bidders))))
         web["series"][str(n_bidders)] = {
             "sim": [round(float(u), 5) for u in sweep.mean_utility],
             "exact": [round(float(u), 5) for u in exact],
@@ -200,6 +201,12 @@ def run_part2(streams: dict[str, np.random.Generator]) -> dict[str, Any]:
             "overpay_pct": [round(float(o), 4) for o in sweep.mean_overpayment_pct],
             "equilibrium_k": round(equilibrium_shading(n_bidders), 4),
             "peak": round(optimal_utility_exact(n_bidders), 6),
+            # Headline numbers for the results page, taken at the equilibrium so
+            # the page can never quote a figure the pipeline did not produce.
+            "best_k_simulated": round(float(sweep.best_k), 4),
+            "could_pay_less_at_eq": round(float(sweep.could_have_paid_less[at_eq]), 6),
+            "overpay_abs_at_eq": round(float(sweep.mean_overpayment[at_eq]), 6),
+            "overpay_pct_at_eq": round(float(sweep.mean_overpayment_pct[at_eq]), 6),
         }
         for i, k in enumerate(sweep.k_grid):
             rows.append(

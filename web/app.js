@@ -1,4 +1,4 @@
-/* Mechanism Design — interactive page.
+/* Gambit: the interactive page.
  *
  * The playground runs a real seeded Monte Carlo in the browser, using the same
  * method as the repository's Python: one block of rival draws is reused across
@@ -48,7 +48,7 @@ function initTabs() {
 
 /* ------------------------------------------------------------------- rng */
 
-/** mulberry32 — small, fast, seeded. Same seed gives the same run every time. */
+/** mulberry32: small, fast, seeded. Same seed gives the same run every time. */
 function rng(seed) {
   let a = seed >>> 0;
   return function () {
@@ -442,15 +442,15 @@ function initPlayground() {
     let v;
     if (gap < 1e-12) {
       v = Math.abs(bid - value) < 1e-9
-        ? { mark: "=", markClass: "ok", head: "You bid your value — nothing beats it",
+        ? { mark: "=", markClass: "ok", head: "You bid your value, and nothing beats it",
             sub: `No bid on the grid does better. ${optimal.length > 1
               ? `${optimal.length} bids tie here, because a rival that halves its value never bids above ${strat.support}.`
               : "It is the unique best bid against these rivals."}` }
         : { mark: "=", markClass: "neutral", head: "Tied with honest bidding",
-            sub: `Bidding ${num(bid, 2)} earns exactly what bidding your value earns — ${optimal.length} bids tie for best. Truthfulness is optimal, just not uniquely so.` };
+            sub: `Bidding ${num(bid, 2)} earns exactly what bidding your value earns. ${optimal.length} bids tie for best, Truthfulness is optimal, just not uniquely so.` };
     } else {
       v = { mark: "↓", markClass: "bad",
-            head: `Honesty wins — you gave up ${num(gap, 4)} per auction`,
+            head: `Honesty wins: you gave up ${num(gap, 4)} per auction`,
             sub: bid > value
               ? `Bidding above your value wins auctions you then pay more for than they are worth.`
               : `Bidding below your value forfeits auctions you would have profited from.` };
@@ -487,7 +487,7 @@ function initPlayground() {
       rows.push([
         String(i + 1), num(bid, 2), num(m, 3),
         { text: won ? "won" : "lost", cls: won ? "won" : "lost" },
-        won ? num(m, 3) : "—",
+        won ? num(m, 3) : "-",
         { text: num(profit, 3), cls: profit < -1e-12 ? "loss" : won ? "won" : "lost" },
       ]);
     }
@@ -510,7 +510,7 @@ function initPlayground() {
     verdict(document.getElementById("pg-verdict"), beatsHonest
       ? { mark: "↑", markClass: "bad",
           head: `Shading beats honesty by ${num(exactAtK, 4)} per auction`,
-          sub: `Bidding your true value earns exactly 0 here — you only win by handing over the whole surplus. This mechanism is not strategyproof, and the best you can do is k = ${num(c, 4)}.` }
+          sub: `Bidding your true value earns exactly 0 here: you only win by handing over the whole surplus. This mechanism is not strategyproof, and the best you can do is k = ${num(c, 4)}.` }
       : { mark: k > 1 ? "↓" : "=", markClass: k > 1 ? "bad" : "neutral",
           head: k > 1 ? "Bidding above your value loses money" : "You earn nothing here",
           sub: k > 1
@@ -555,7 +555,7 @@ function initPlayground() {
       rows.push([
         String(i + 1), num(v1, 3), num(myBid, 3), num(top, 3),
         { text: won ? "won" : "lost", cls: won ? "won" : "lost" },
-        won ? num(myBid, 3) : "—",
+        won ? num(myBid, 3) : "-",
         { text: num(profit, 3), cls: profit < -1e-12 ? "loss" : won ? "won" : "lost" },
       ]);
     }
@@ -808,7 +808,7 @@ function initVCG() {
               ? `It is on the chosen path, paid ${num(payments[selected], 1)} against a true cost of ${trueCost}.`
               : `It is not on the chosen path, so it is paid nothing and earns nothing.` };
     } else if (profit > honestProfit + 1e-9) {
-      v = { mark: "!", markClass: "bad", head: "Lying paid off — that would be a bug",
+      v = { mark: "!", markClass: "bad", head: "Lying paid off, which would be a bug",
             sub: `VCG is strategyproof, so this should be unreachable.` };
     } else if (profit < honestProfit - 1e-9) {
       v = { mark: "↓", markClass: "bad",
@@ -864,7 +864,7 @@ initVCG();
  *
  * The markup ships with these numbers inline so the page still reads correctly
  * with no network and when opened straight off disk. When data.json does load,
- * it wins — which means a figure quoted here can never drift away from what the
+ * it wins, which means a figure quoted here can never drift away from what the
  * pipeline actually produced.
  */
 function initResults(part2) {

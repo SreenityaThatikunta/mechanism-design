@@ -1,17 +1,17 @@
 # Design decisions
 
 Why this project is built the way it is. Each entry records the choice, the alternative that
-was rejected, and the reason — including the ones where the honest answer is less flattering
+was rejected, and the reason, including the ones where the honest answer is less flattering
 than it could have been.
 
 ---
 
-### D1 — Validate the simulation against closed-form theory, not against itself
+### D1. Validate the simulation against closed-form theory, not against itself
 
 **Choice.** Every simulated quantity has an analytic counterpart derived by hand. The tests
 assert the Monte Carlo converges to the formula; the figures plot both on the same axes.
 
-**Rejected.** Snapshot testing — freeze the output of a known-good run and assert future runs
+**Rejected.** Snapshot testing: freeze the output of a known-good run and assert future runs
 match. It is far less work.
 
 **Why.** A snapshot test only proves the code still does what it did before, which is worthless
@@ -29,12 +29,12 @@ configurations is 0.0016.
 
 **Caveat.** The closed forms assume each rival's bid is uniform on `[0, s]`. That assumption is
 load-bearing for every analytic result here, so it is itself verified empirically rather than
-asserted — `test_rival_bids_are_uniform_on_their_support` compares the empirical CDF against the
+asserted. `test_rival_bids_are_uniform_on_their_support` compares the empirical CDF against the
 declared one.
 
 ---
 
-### D2 — Report argmax *sets*, not a single best bid
+### D2. Report argmax *sets*, not a single best bid
 
 **Choice.** `argmax_set` returns every bid attaining the maximum. The summary and the page both
 say how many bids tie.
@@ -44,18 +44,18 @@ say how many bids tie.
 **Why.** It would have made the headline result look stronger than it is. Against a rival that
 halves its value, bidder 1 with `v = 0.8` wins every auction once `b ≥ 0.5`, so 51 bids on the
 grid are exactly equally good. Against a *fixed* rival bid, between 41 and 91 bids tie. Truthful
-bidding is **weakly** dominant — always in the argmax, rarely the only element of it — and a
+bidding is **weakly** dominant, always in the argmax and rarely the only element of it, so a
 lone argmax would quietly misrepresent that as strict dominance.
 
 ---
 
-### D3 — Demonstrate dominance by sweeping the rival's bid, not by fixing it
+### D3. Demonstrate dominance by sweeping the rival's bid, not by fixing it
 
 **Choice.** `dominance_profile` sweeps the rival bid across [0, 1] and reports, for each of
 bidder 1's bids, the fraction of rival bids against which it is optimal.
 
 **Why.** The brief asks to fix the rival bid at 0.1, 0.4 and 0.9 and confirm `b = v` is best.
-It is — but so are dozens of other bids in each case, so those three checks alone cannot
+It is, but so are dozens of other bids in each case, so those three checks alone cannot
 single out truthfulness. Sweeping the rival's bid can: `b = v` is the *unique* bid optimal
 against all of them, which is precisely the definition of weak dominance. Any `b < v` forfeits
 auctions when the rival bids between `b` and `v`; any `b > v` wins at a loss when the rival bids
@@ -63,7 +63,7 @@ between `v` and `b`.
 
 ---
 
-### D4 — Common random numbers across the bid grid
+### D4. Common random numbers across the bid grid
 
 **Choice.** One block of rival draws is generated per configuration and reused for every bid on
 the grid, in both the Python and the browser simulation.
@@ -78,7 +78,7 @@ the user just played, not on a separate run.
 
 ---
 
-### D5 — Union the exact equilibrium factors into the shading grid
+### D5. Union the exact equilibrium factors into the shading grid
 
 **Choice.** The `k` grid is the regular 0.05 steps from 0.1 to 2.0, unioned with `(n−1)/n` for
 each `n`.
@@ -90,14 +90,14 @@ entire purpose of the sweep.
 
 ---
 
-### D6 — Break shortest-path ties on the node sequence
+### D6. Break shortest-path ties on the node sequence
 
 **Choice.** Dijkstra pushes `(cost, path)` onto the heap, so equal-cost paths are ordered
 lexicographically by node sequence.
 
 **Rejected.** Letting heap order decide.
 
-**Why.** The Figure 7.3 network has genuine ties — ABDF and ACF both cost 7. Leaving the choice
+**Why.** The Figure 7.3 network has genuine ties: ABDF and ACF both cost 7. Leaving the choice
 to heap ordering makes the result depend on dictionary insertion order, which is stable in
 practice and therefore produces a test that passes for the wrong reason. Making the rule
 explicit means the JavaScript implementation can match the Python exactly, which it does at all
@@ -105,9 +105,9 @@ explicit means the JavaScript implementation can match the Python exactly, which
 
 ---
 
-### D7 — Run the playground simulation live rather than replaying stored curves
+### D7. Run the playground simulation live rather than replaying stored curves
 
-**Choice.** The page runs a seeded `mulberry32` Monte Carlo in the browser — 100,000 auctions —
+**Choice.** The page runs a seeded `mulberry32` Monte Carlo in the browser, 100,000 auctions,
 using the same method as the Python.
 
 **Rejected.** Shipping precomputed curves as JSON and interpolating. This was in fact the first
@@ -115,7 +115,7 @@ version.
 
 **Why.** The central feature is the counterfactual: *on the auctions you just played*, what
 would honesty have earned? Replayed curves cannot answer that, because there is no "run you just
-played" — only an average someone else computed. Running it live also means the seed box is
+played", only an average someone else computed. Running it live also means the seed box is
 real: change it and every number moves while every conclusion holds.
 
 **Cost.** ~10M operations per rebuild, which lands around 100 ms. Fast enough that structural
@@ -123,7 +123,7 @@ controls can rebuild on change, while moving the bid only re-reads the cached dr
 
 ---
 
-### D8 — Results tables on the page render from `web/data.json`
+### D8. Results tables on the page render from `web/data.json`
 
 **Choice.** The published numbers are inlined in the markup *and* overwritten from `data.json`
 when it loads.
@@ -134,7 +134,7 @@ inline copy keeps the page correct with no network and when opened off disk.
 
 ---
 
-### D9 — CI checks numbers for reproducibility, not images
+### D9. CI checks numbers for reproducibility, not images
 
 **Choice.** CI reruns the pipeline and fails if anything in `results/tables/` or `web/data.json`
 differs from what is committed. Figures are excluded.
@@ -149,7 +149,7 @@ across platforms, so they carry the guarantee that actually matters.
 
 ---
 
-### D10 — The site lives in `web/`, documentation in `docs/`
+### D10. The site lives in `web/`, documentation in `docs/`
 
 **Choice.** `web/` is the deployed static site (Vercel's output directory). `docs/` holds
 written documentation. `results/` holds canonical numeric output.
@@ -159,11 +159,11 @@ repository did initially.
 
 **Why.** With the site in `docs/`, there is nowhere to put design documentation without
 publishing it to the website. Separating them also means the result CSVs stop being served as
-part of the site — nothing ever linked to them from the page.
+part of the site, and nothing ever linked to them from the page.
 
 ---
 
-### D11 — Declare the project a static site to Vercel
+### D11. Declare the project a static site to Vercel
 
 **Choice.** `vercel.json` sets `"framework": null` with an empty build command.
 
@@ -174,13 +174,13 @@ output is read *from*; it does not affect runtime detection.
 
 ---
 
-### D12 — Deviations from the brief, and why
+### D12. Deviations from the brief, and why
 
 Three places where the brief and the mathematics disagree. In each case the code does the
 correct thing and says so rather than reproducing the expected answer:
 
 - **Part 1B asks to "confirm `b = v` gives the highest utility" against a fixed rival bid.** It
-  does, but not uniquely — see D2. Reported as weak dominance.
+  does, but not uniquely; see D2. Reported as weak dominance.
 - **Part 2's expected optimum.** The peak is at `k = (n−1)/n`, *not* at `k = 1`. Truthful bidding
   in a first-price auction earns exactly zero while still winning 44–75% of auctions. This is
   the sharpest contrast with Part 1 and the reason first-price auctions are not strategyproof.

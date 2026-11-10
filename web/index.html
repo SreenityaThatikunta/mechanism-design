@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gambit · Can you gain by lying?</title>
-<meta name="description" content="Gambit — second-price, first-price and VCG auctions simulated in your browser. Try to beat truthful bidding, and see where you can.">
+<meta name="description" content="Gambit: second-price, first-price and VCG auctions simulated in your browser. Try to beat truthful bidding, and see where you can.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -254,7 +254,7 @@ footer a:hover{color:var(--text)}
     <div class="card"><h3>First-price <span>pay your own bid</span></h3><div class="body">
       <p style="margin:0">
         Now your bid sets the price too. Bidding your true value means winning only when you
-        hand over everything the item was worth — profit exactly zero. Everyone shades down, and
+        hand over everything the item was worth, for a profit of exactly zero. Everyone shades down, and
         the equilibrium lands at <code>k = (n−1)/n</code>.
       </p>
     </div></div>
@@ -300,7 +300,7 @@ footer a:hover{color:var(--text)}
 
   <div class="grid3">
     <div class="card"><h3>On the path</h3><div class="body"><p style="margin:0">
-      AB's payment is pinned at <strong>4</strong> whatever it reports — the formula contains
+      AB's payment is pinned at <strong>4</strong> whatever it reports, because the formula contains
       only <em>other</em> agents' costs. Lying can only lose it the contract.</p></div></div>
     <div class="card"><h3>Off the path</h3><div class="body"><p style="margin:0">
       AC can buy its way on by reporting under 1, and is then paid 1 against a true cost of 2.
@@ -322,7 +322,7 @@ footer a:hover{color:var(--text)}
   <h3>Second-price: the peak never moves</h3>
   <div class="headline">
     <span class="big ok">9 / 9</span>
-    <span class="cap">panels where the best bid is exactly <code>b = v</code> — across three
+    <span class="cap">panels where the best bid is exactly <code>b = v</code>, across three
     values and three different rival strategies.</span>
   </div>
   <figure>
@@ -336,7 +336,7 @@ footer a:hover{color:var(--text)}
   </figure>
 
   <p>
-    Against a <em>single</em> fixed rival bid, truthfulness is optimal but rarely unique — 40 to
+    Against a <em>single</em> fixed rival bid, truthfulness is optimal but rarely unique: 40 to
     90 bids on the grid tie for best. It only becomes the unique answer once you ask which bid
     works against <em>every</em> rival bid at once:
   </p>
@@ -349,7 +349,7 @@ footer a:hover{color:var(--text)}
   <h3>First-price: honesty earns nothing</h3>
   <div class="headline">
     <span class="big bad">0.0000</span>
-    <span class="cap">expected utility from bidding your true value, for every <code>n</code> —
+    <span class="cap">expected utility from bidding your true value, for every <code>n</code>,
       while still winning 44–75% of the auctions you enter.</span>
   </div>
   <table class="cmp" id="res-shading">
@@ -381,7 +381,7 @@ footer a:hover{color:var(--text)}
     </tbody>
   </table>
   <p class="small">
-    The fraction is ~100% by construction — bids are continuous, so the winner almost surely
+    The fraction is ~100% by construction: bids are continuous, so the winner almost surely
     strictly outbid the runner-up. The size of the gap is the informative number, and in a
     second-price auction it is zero by definition. That is the entire design argument for
     charging the runner-up's bid.
@@ -390,7 +390,7 @@ footer a:hover{color:var(--text)}
   <h3>VCG: the textbook, reproduced exactly</h3>
   <div class="headline">
     <span class="big">ABEF</span>
-    <span class="cap">chosen, with AB paid 4, BE paid 2, EF paid 3 and every other edge 0 —
+    <span class="cap">chosen, with AB paid 4, BE paid 2, EF paid 3 and every other edge 0,
       matching Figure 7.3 of Shoham &amp; Leyton-Brown line for line.</span>
   </div>
   <table class="cmp">
@@ -400,7 +400,7 @@ footer a:hover{color:var(--text)}
       <tr><td>AB</td><td>3</td><td>yes</td><td>ACEF (6)</td><td>4</td><td>1</td></tr>
       <tr><td>BE</td><td>1</td><td>yes</td><td>ACEF (6)</td><td>2</td><td>1</td></tr>
       <tr><td>EF</td><td>1</td><td>yes</td><td>ABDF (7)</td><td>3</td><td>2</td></tr>
-      <tr><td>AC, BD, CE, CF, DF</td><td>—</td><td>no</td><td>ABEF (5)</td><td>0</td><td>0</td></tr>
+      <tr><td>AC, BD, CE, CF, DF</td><td>-</td><td>no</td><td>ABEF (5)</td><td>0</td><td>0</td></tr>
     </tbody>
   </table>
   <p class="small">
@@ -427,7 +427,7 @@ footer a:hover{color:var(--text)}
   <p>With <code>k</code> rivals each bidding uniformly on <code>[0, s]</code> and
     <code>t = min(b, s)</code>, the second-price expected utility is</p>
   <div class="formula">E[u(b)] = (t/s)^k · (v − k·t/(k+1))        dE/db = (v − b)·f(b)</div>
-  <p>The derivative changes sign exactly at <code>b = v</code> — that is the proof, and the
+  <p>The derivative changes sign exactly at <code>b = v</code>. That is the proof, and the
     simulation is only there to confirm it. For the first-price auction with
     <code>c = (n−1)/n</code>:</p>
   <div class="formula">E[U(k)] = (1−k)·(k/c)^(n−1) / (n+1)          for k ≤ c
@@ -437,18 +437,18 @@ peak at k = c, worth exactly 1/(n(n+1))</div>
   <ul>
     <li><strong>Common random numbers.</strong> One block of rival draws is reused across every
       bid on the grid. Each estimate stays unbiased while differences between neighbouring bids
-      get far less noisy — so the <em>shape</em> of the curve is pinned down much more precisely
+      get far less noisy, so the <em>shape</em> of the curve is pinned down much more precisely
       at equal cost. The playground above does the same, which is why the counterfactual is a
       fair comparison rather than two separate runs.</li>
     <li><strong>Argmax sets, not a single argmax.</strong> Where many bids tie, the code reports
       all of them. Collapsing to one would make these mechanisms look more sharply truthful than
       they are.</li>
-    <li><strong>Explicit tie-breaking.</strong> The network has genuine ties — ABDF and ACF both
-      cost 7 — so Dijkstra breaks them on the lexicographically smallest node sequence rather
+    <li><strong>Explicit tie-breaking.</strong> The network has genuine ties (ABDF and ACF both
+      cost 7), so Dijkstra breaks them on the lexicographically smallest node sequence rather
       than leaving it to dictionary ordering.</li>
     <li><strong>Grid resolution.</strong> The shading grid unions in the exact factors
       <code>(n−1)/n</code>. On a plain 0.05 grid, <code>2/3</code> is simply absent and the
-      n = 3 optimum would read as 0.65 — a grid artifact, not a result.</li>
+      n = 3 optimum would read as 0.65, a grid artifact, not a result.</li>
     <li><strong>Reproducible to the byte.</strong> CI reruns the pipeline and fails if any
       committed number moves. Figures are excluded on purpose: matplotlib rasterises text
       through the platform font stack, so the same plot built on macOS and on Linux differs in
@@ -466,7 +466,7 @@ python -m mechanism_design.cli part2     # one part on its own</div>
   <h3>Reference</h3>
   <p class="small">
     Y. Shoham and K. Leyton-Brown, <em>Multiagent Systems: Algorithmic, Game-Theoretic, and
-    Logical Foundations</em>, Cambridge University Press — chapter 7, with Figure 7.3 and the
+    Logical Foundations</em>, Cambridge University Press, chapter 7, with Figure 7.3 and the
     worked VCG example in §4.2.
   </p>
 </section>

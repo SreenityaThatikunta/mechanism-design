@@ -12,7 +12,7 @@ closed form derived by hand: the **second-price (Vickrey)** auction, the **first
 and **VCG** applied to buying the cheapest path through a network. In two of them lying cannot
 help you. In the third, honesty earns you exactly nothing.
 
-**Live demo: [gambit.sreenitya.in](https://gambit.sreenitya.in)** — pick a mechanism and a bid,
+**Live demo: [gambit.sreenitya.in](https://gambit.sreenitya.in)**: pick a mechanism and a bid,
 run 100,000 auctions in your browser, and watch what telling the truth would have earned on the
 very same auctions you just played.
 
@@ -36,13 +36,13 @@ make serve                   # interactive page at http://localhost:8000
 |---|---|---|---|
 | **Part 1** | Second-price, 1–2 rivals | **Yes, weakly dominant.** `b = v` is the *only* bid that is optimal against every possible rival bid | [figures](#part-1--second-price-sealed-bid-auction) |
 | **Part 2** | First-price, n = 2, 3, 4 | **No.** The optimum is `k = (n−1)/n`; bidding truthfully earns exactly **0** | [figures](#part-2--first-price-auction) |
-| **Part 3** | VCG cheapest path | **Yes, dominant.** No edge — on or off the path — gains from any misreport | [figures](#part-3--vcg-for-the-cheapest-path) |
+| **Part 3** | VCG cheapest path | **Yes, dominant.** No edge, on or off the path, gains from any misreport | [figures](#part-3--vcg-for-the-cheapest-path) |
 
 103 tests, all asserting against exact theory rather than stored snapshots.
 
 ---
 
-## Part 1 — second-price sealed-bid auction
+## Part 1: second-price sealed-bid auction
 
 Bidder 1 has a fixed value `v ∈ {0.2, 0.5, 0.8}` and bids `b ∈ {0.00, 0.01, …, 1.00}`. Each rival
 draws a value from U[0,1] and bids (a) truthfully, (b) half its value, or (c) a fresh U[0,1] draw
@@ -52,11 +52,11 @@ ignoring its value. Bidder 1 pays the highest rival bid if it wins, so its utili
 Bidding above `v` only buys auctions that lose money; bidding below `v` only forfeits auctions
 that would have profited.
 
-### A. Expected utility against every bid — 9 panels
+### A. Expected utility against every bid, in 9 panels
 
 ![second-price, one rival](web/figures/part1a_second_price_1rival.png)
 
-**Yes, these plots help bidder 1 choose its strategy — and the reason is what they have in
+**Yes, these plots help bidder 1 choose its strategy, and the reason is what they have in
 common, not what distinguishes them.** The height and shape of the curve change across the nine
 panels, but the location of the peak never does: it is at `b = v` in all nine. So bidder 1 can
 pick its bid *without knowing which strategy the rival is playing*, which is the practical
@@ -75,7 +75,7 @@ Two details the panels make visible:
 
 ![fixed rival bids](web/figures/part1b_fixed_rival_bids.png)
 
-With the rival's bid pinned at 0.1, 0.4 or 0.9, `b = v` is optimal in all nine combinations — but
+With the rival's bid pinned at 0.1, 0.4 or 0.9, `b = v` is optimal in all nine combinations, but
 it is **not uniquely** optimal, and saying otherwise would overstate the result. Against a rival
 bidding 0.1 with `v = 0.5`, bids of 0.2, 0.5 and 1.0 all win and all pay 0.1. Typically 40–90
 bids on the grid tie for best.
@@ -83,7 +83,7 @@ bids on the grid tie for best.
 The sharp case is `v = 0.8` against a rival bidding 0.9: truthful bidding loses and earns 0,
 while any winning bid earns `0.8 − 0.9 = −0.1`. Here honesty is strictly better.
 
-So what makes `b = v` special? Not any single fixed rival bid — the *whole range* of them:
+So what makes `b = v` special? Not any single fixed rival bid, but the *whole range* of them:
 
 ![dominance profile](web/figures/part1_dominance_profile.png)
 
@@ -95,7 +95,7 @@ loss when the rival bids between `v` and `b`. That is precisely what *weakly dom
 
 ![second-price, two rivals](web/figures/part1a_second_price_2rival.png)
 
-With a second rival the curves fall — bidder 1 wins less often and pays more when it does — but
+With a second rival the curves fall, since bidder 1 wins less often and pays more when it does, but
 the peak stays at `b = v`. Competition changes the payoff, never the optimal strategy.
 
 *(The brief's part 1C says "repeat parts A and C"; part B is clearly meant. For B with two rivals
@@ -116,7 +116,7 @@ rival, `v·b² − (2/3)·b³` for two. Max simulation-vs-theory error across al
 
 ---
 
-## Part 2 — first-price auction
+## Part 2: first-price auction
 
 All `n` bidders draw from U[0,1]. Bidders 2…n play the symmetric equilibrium `b = ((n−1)/n)·v`.
 Bidder 1 deviates, bidding `k·v` for `k ∈ [0.1, 2.0]`. The winner pays its own bid.
@@ -125,7 +125,7 @@ Bidder 1 deviates, bidding `k·v` for `k ∈ [0.1, 2.0]`. The winner pays its ow
 
 **The optimum is at `k = (n−1)/n`, not at `k = 1`.** This is the headline, and it is easy to
 misread the brief as expecting a peak at truthful bidding. Truthful bidding (`k = 1`) earns
-**exactly zero** — the only auctions you win are those where you hand over your entire surplus.
+**exactly zero**, because the only auctions you win are those where you hand over your entire surplus.
 This is the cleanest possible contrast with part 1.
 
 | n | Equilibrium k | Simulated optimum | Exact E[U] = 1/(n(n+1)) | Simulated | E[U] at k = 1 |
@@ -142,7 +142,7 @@ both directions: under-shading wins too rarely, over-shading wins at too high a 
 
 ![overpayment](web/figures/part2_overpayment.png)
 
-**Yes — in 100.00% of auctions.** But that number is ~100% *by construction*: bids are drawn from
+**Yes, in 100.00% of auctions.** But that number is ~100% *by construction*: bids are drawn from
 continuous distributions, so the winner almost surely strictly outbid the runner-up. Reporting
 the fraction alone would be close to meaningless, so the magnitude is reported too:
 
@@ -153,13 +153,13 @@ the fraction alone would be close to meaningless, so the magnitude is reported t
 | 4 | 100.00% | 0.1502 | 25.0% |
 
 The winner routinely pays a quarter to a half more than it needed to. **In a second-price auction
-this gap is zero by definition** — the winner pays the runner-up's bid exactly. That is the whole
+this gap is zero by definition**, since the winner pays the runner-up's bid exactly. That is the whole
 design argument for charging the second price, and it is why the left panel plots second-price as
 a reference line at 0%.
 
 ---
 
-## Part 3 — VCG for the cheapest path
+## Part 3: VCG for the cheapest path
 
 Figure 7.3 of Shoham & Leyton-Brown. Each **edge** is an agent with a private cost; the mechanism
 buys a path from A to F. The payment to an edge on the chosen path is
@@ -168,7 +168,7 @@ buys a path from A to F. The payment to an edge on the chosen path is
 p_e = L(cheapest path without e) − (L(chosen path) − cost_e)
 ```
 
-— the cost of the best path that would exist without it, minus the cost of the rest of the path
+that is, the cost of the best path that would exist without it, minus the cost of the rest of the path
 actually chosen.
 
 ![VCG network](web/figures/part3_vcg_network.png)
@@ -181,11 +181,11 @@ This reproduces the textbook result exactly: path **ABEF**, with **AB paid 4, BE
 | AB | 3 | yes | ACEF (6) | **4** | 1 |
 | BE | 1 | yes | ACEF (6) | **2** | 1 |
 | EF | 1 | yes | ABDF (7) | **3** | 2 |
-| AC, BD, CE, CF, DF | — | no | ABEF (5) | 0 | 0 |
+| AC, BD, CE, CF, DF | - | no | ABEF (5) | 0 | 0 |
 
 **BE and EF both cost 1, yet EF is paid 3 and BE only 2.** VCG prices *marginal contribution*,
 not cost: the network without EF (7) is worse than the network without BE (6), so EF's absence
-hurts more and it captures more surplus. Edges off the path are not pivotal — removing them
+hurts more and it captures more surplus. Edges off the path are not pivotal: removing them
 changes nothing, the two terms cancel, and they are paid zero.
 
 ### Can an edge gain by lying?
@@ -194,11 +194,11 @@ changes nothing, the two terms cancel, and they are paid zero.
 
 Sweeping each edge's reported cost over 0 → 10 in steps of 0.5, holding its true cost fixed:
 
-- **AB (on the path, true cost 3).** Its payment is **pinned at 4 regardless of what it reports** —
-  the formula contains only *other* agents' costs. Under-reporting therefore changes nothing, and
+- **AB (on the path, true cost 3).** Its payment is **pinned at 4 regardless of what it reports**,
+  because the formula contains only *other* agents' costs. Under-reporting therefore changes nothing, and
   over-reporting past ~4 simply prices it off the path, dropping its utility from 1 to 0. There is
   no report that beats the truth.
-- **AC (off the path, true cost 2).** Reporting below 1 does buy it onto the path — but it is then
+- **AC (off the path, true cost 2).** Reporting below 1 does buy it onto the path, but it is then
   paid only 1 against a true cost of 2, for a utility of **−1**. The only way to win is to win at
   a loss.
 
@@ -226,13 +226,13 @@ The uniform-bid assumption those formulas rest on is itself verified empirically
 assumed, by comparing each strategy's empirical CDF against its declared one.
 
 Full numbers for every configuration are in [`results/summary.md`](results/summary.md),
-regenerated by the pipeline. The reasoning behind the design — including the places where this
-code deliberately disagrees with the brief — is in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+regenerated by the pipeline. The reasoning behind the design, including the places where this
+code deliberately disagrees with the brief, is in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 Other choices worth naming:
 
 - **Common random numbers.** One block of rival draws is reused across every bid on the grid. Each
-  estimate stays unbiased while differences between neighbouring bids become far less noisy — so
+  estimate stays unbiased while differences between neighbouring bids become far less noisy, so
   the *shape* of the curve, which is what the plot is for, is estimated much more precisely at
   equal cost.
 - **Seeded and reproducible.** One master seed, one independent child stream per part, so any part
@@ -243,7 +243,7 @@ Other choices worth naming:
   breaks them on the lexicographically smallest node sequence rather than leaving it to dict
   ordering.
 - **Grid resolution.** The shading grid unions in the exact factors `(n−1)/n`; on a plain 0.05
-  grid, `2/3` is absent and the n = 3 optimum would read as 0.65 — a grid artifact, not a result.
+  grid, `2/3` is absent and the n = 3 optimum would read as 0.65, a grid artifact rather than a result.
 - **Reproducible to the byte.** CI reruns the whole pipeline and fails if any committed *number*
   (`docs/tables/`, `docs/data.json`) differs, so results cannot silently drift from the code that
   produced them. Figures are excluded from that check on purpose: matplotlib rasterises text via

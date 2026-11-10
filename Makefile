@@ -18,7 +18,7 @@ results:
 	$(PY) -m mechanism_design.cli all
 
 clean:
-	rm -rf docs/figures/*.png docs/tables/*.csv .pytest_cache .ruff_cache
+	rm -rf web/figures/*.png results/tables/*.csv web/data.json .pytest_cache .ruff_cache
 
 serve:
-	$(PY) -m http.server -d docs 8000
+	$(PY) -m http.server -d web 8000

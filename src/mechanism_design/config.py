@@ -9,10 +9,15 @@ import numpy as np
 #: Root of the repository (two levels above this file's package directory).
 ROOT = Path(__file__).resolve().parents[2]
 
-#: Figures and tables are written straight into ``docs/`` so that the same
-#: artifacts serve the README, the test suite and the hosted demo page.
-FIGURE_DIR = ROOT / "docs" / "figures"
-TABLE_DIR = ROOT / "docs" / "tables"
+#: The static site. Figures live here because both the README and the hosted
+#: page embed them, so there is only ever one copy.
+WEB_DIR = ROOT / "web"
+FIGURE_DIR = WEB_DIR / "figures"
+
+#: Canonical numeric output. Kept out of the published site: nothing links to
+#: these CSVs from the page, and they are the artifact CI checks for drift.
+RESULTS_DIR = ROOT / "results"
+TABLE_DIR = RESULTS_DIR / "tables"
 
 #: Master seed. Every experiment derives an independent child stream from this,
 #: so results are bit-reproducible and no two experiments share random draws.

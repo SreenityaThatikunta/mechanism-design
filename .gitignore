@@ -20,3 +20,4 @@ venv/
 
 # Local dev server config
 .claude/
+.vercel

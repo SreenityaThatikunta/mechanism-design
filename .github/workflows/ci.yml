@@ -41,4 +41,4 @@ jobs:
         # built on this runner differ in bytes while being identical plots.
         # Asserting on them would fail for reasons that say nothing about
         # correctness. The CSVs and data.json are plain text and are stable.
-        run: git diff --exit-code --stat docs/tables docs/data.json
+        run: git diff --exit-code --stat results/tables web/data.json

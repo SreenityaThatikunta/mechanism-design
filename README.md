@@ -10,7 +10,7 @@ Every simulated curve is checked against a closed-form expression derived by han
 plot both on the same axes, so agreement between a 200,000-auction simulation and a formula is
 visible rather than merely claimed.
 
-**[→ Interactive demo](https://sreenitya.in)** — pick a mechanism and a bid, then run 100,000
+**[→ Gambit, the interactive demo](https://gambit.sreenitya.in)** — pick a mechanism and a bid, then run 100,000
 auctions in your browser. The same rival draws are replayed against honest bidding, so you always
 see what telling the truth would have earned on exactly the run you just played. In the
 second-price auction you cannot beat it; in the first-price auction honesty earns you nothing.

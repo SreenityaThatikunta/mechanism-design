@@ -1,19 +1,27 @@
-# Mechanism Design: when is honesty the best policy?
+# Gambit: are these auctions safe to be honest in?
 
-A Monte Carlo study of three auction mechanisms — the **second-price (Vickrey)** auction, the
-**first-price** auction, and **VCG** applied to buying the cheapest path through a network.
+[![CI](https://github.com/SreenityaThatikunta/mechanism-design/actions/workflows/ci.yml/badge.svg)](https://github.com/SreenityaThatikunta/mechanism-design/actions/workflows/ci.yml)
+![python](https://img.shields.io/badge/python-3.10%2B-blue)
+![tests](https://img.shields.io/badge/tests-103%20passing-brightgreen)
+![license](https://img.shields.io/badge/license-MIT-green)
 
-All three probe the same question from different angles: *does the mechanism reward telling the
-truth?* The answer is yes, yes-but-only-after-a-subtlety, and no — and the code shows exactly why.
+**You know what something is worth to you. Is there ever an advantage in pretending otherwise?**
 
-Every simulated curve is checked against a closed-form expression derived by hand. The figures
-plot both on the same axes, so agreement between a 200,000-auction simulation and a formula is
-visible rather than merely claimed.
+Three auction mechanisms, each simulated 200,000 times per bid point and checked against a
+closed form derived by hand: the **second-price (Vickrey)** auction, the **first-price** auction,
+and **VCG** applied to buying the cheapest path through a network. In two of them lying cannot
+help you. In the third, honesty earns you exactly nothing.
 
-**[→ Gambit, the interactive demo](https://gambit.sreenitya.in)** — pick a mechanism and a bid, then run 100,000
-auctions in your browser. The same rival draws are replayed against honest bidding, so you always
-see what telling the truth would have earned on exactly the run you just played. In the
-second-price auction you cannot beat it; in the first-price auction honesty earns you nothing.
+**Live demo: [gambit.sreenitya.in](https://gambit.sreenitya.in)** — pick a mechanism and a bid,
+run 100,000 auctions in your browser, and watch what telling the truth would have earned on the
+very same auctions you just played.
+
+<p align="center"><img src="docs/demo.gif" width="760" alt="Dragging a bid away from its true value in a second-price auction and watching the profit fall, then switching to a first-price auction where truthful bidding earns zero"></p>
+
+**Stack:** Python, NumPy, Matplotlib, pytest, ruff; vanilla JavaScript and SVG for the web demo,
+deployed on Vercel.
+
+**Author:** Sreenitya Thatikunta.
 
 ```bash
 make install && make results && make test
@@ -46,7 +54,7 @@ that would have profited.
 
 ### A. Expected utility against every bid — 9 panels
 
-![second-price, one rival](docs/figures/part1a_second_price_1rival.png)
+![second-price, one rival](web/figures/part1a_second_price_1rival.png)
 
 **Yes, these plots help bidder 1 choose its strategy — and the reason is what they have in
 common, not what distinguishes them.** The height and shape of the curve change across the nine
@@ -65,7 +73,7 @@ Two details the panels make visible:
 
 ### B. Against a fixed rival bid
 
-![fixed rival bids](docs/figures/part1b_fixed_rival_bids.png)
+![fixed rival bids](web/figures/part1b_fixed_rival_bids.png)
 
 With the rival's bid pinned at 0.1, 0.4 or 0.9, `b = v` is optimal in all nine combinations — but
 it is **not uniquely** optimal, and saying otherwise would overstate the result. Against a rival
@@ -77,7 +85,7 @@ while any winning bid earns `0.8 − 0.9 = −0.1`. Here honesty is strictly bet
 
 So what makes `b = v` special? Not any single fixed rival bid — the *whole range* of them:
 
-![dominance profile](docs/figures/part1_dominance_profile.png)
+![dominance profile](web/figures/part1_dominance_profile.png)
 
 Sweeping the rival's bid across [0,1], `b = v` is the **unique** bid optimal against every one of
 them. Any `b < v` forfeits auctions when the rival bids between `b` and `v`; any `b > v` wins at a
@@ -85,7 +93,7 @@ loss when the rival bids between `v` and `b`. That is precisely what *weakly dom
 
 ### C. Two rivals
 
-![second-price, two rivals](docs/figures/part1a_second_price_2rival.png)
+![second-price, two rivals](web/figures/part1a_second_price_2rival.png)
 
 With a second rival the curves fall — bidder 1 wins less often and pays more when it does — but
 the peak stays at `b = v`. Competition changes the payoff, never the optimal strategy.
@@ -113,7 +121,7 @@ rival, `v·b² − (2/3)·b³` for two. Max simulation-vs-theory error across al
 All `n` bidders draw from U[0,1]. Bidders 2…n play the symmetric equilibrium `b = ((n−1)/n)·v`.
 Bidder 1 deviates, bidding `k·v` for `k ∈ [0.1, 2.0]`. The winner pays its own bid.
 
-![first-price shading](docs/figures/part2_first_price_shading.png)
+![first-price shading](web/figures/part2_first_price_shading.png)
 
 **The optimum is at `k = (n−1)/n`, not at `k = 1`.** This is the headline, and it is easy to
 misread the brief as expecting a peak at truthful bidding. Truthful bidding (`k = 1`) earns
@@ -132,7 +140,7 @@ both directions: under-shading wins too rarely, over-shading wins at too high a 
 
 ### Could the winner have paid less?
 
-![overpayment](docs/figures/part2_overpayment.png)
+![overpayment](web/figures/part2_overpayment.png)
 
 **Yes — in 100.00% of auctions.** But that number is ~100% *by construction*: bids are drawn from
 continuous distributions, so the winner almost surely strictly outbid the runner-up. Reporting
@@ -163,7 +171,7 @@ p_e = L(cheapest path without e) − (L(chosen path) − cost_e)
 — the cost of the best path that would exist without it, minus the cost of the rest of the path
 actually chosen.
 
-![VCG network](docs/figures/part3_vcg_network.png)
+![VCG network](web/figures/part3_vcg_network.png)
 
 This reproduces the textbook result exactly: path **ABEF**, with **AB paid 4, BE paid 2, EF paid
 3**, and every other edge paid **0**.
@@ -182,7 +190,7 @@ changes nothing, the two terms cancel, and they are paid zero.
 
 ### Can an edge gain by lying?
 
-![VCG misreports](docs/figures/part3_vcg_misreports.png)
+![VCG misreports](web/figures/part3_vcg_misreports.png)
 
 Sweeping each edge's reported cost over 0 → 10 in steps of 0.5, holding its true cost fixed:
 
@@ -216,6 +224,10 @@ simulated quantity here has an analytic counterpart:
 
 The uniform-bid assumption those formulas rest on is itself verified empirically rather than
 assumed, by comparing each strategy's empirical CDF against its declared one.
+
+Full numbers for every configuration are in [`results/summary.md`](results/summary.md),
+regenerated by the pipeline. The reasoning behind the design — including the places where this
+code deliberately disagrees with the brief — is in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 Other choices worth naming:
 
@@ -253,11 +265,16 @@ src/mechanism_design/
 └── cli.py           reproducible pipeline
 tests/               103 tests, asserted against exact theory
 docs/
-├── index.html       interactive page (Playground / VCG / Results / How it works)
+├── DECISIONS.md     why the project is built this way
+└── demo.gif
+results/
+├── summary.md       human-readable results, regenerated by the pipeline
+└── tables/          generated CSVs
+web/                 the deployed site (Vercel output directory)
+├── index.html       Playground / VCG / Results / How it works
 ├── app.js           in-browser Monte Carlo, charts, Dijkstra + VCG
 ├── data.json        pipeline output the Results tab renders from
-├── figures/         generated PNGs
-└── tables/          generated CSVs
+└── figures/         generated PNGs
 ```
 
 | Command | Does |

@@ -659,12 +659,18 @@ function initPlayground() {
     seedInput.value = String(state.seed);
     rebuild();
   });
-  document.getElementById("pg-reseed").addEventListener("click", () => {
+  // A fresh run means fresh draws. Rebuilding on the same seed replays the
+  // identical stream, so the numbers would not move and the button would look
+  // broken; drawing a new seed first is what makes "run" mean anything. Typing
+  // a seed into the box still reproduces that exact run.
+  const runFresh = () => {
     state.seed = Math.floor(Math.random() * 99999) + 1;
     seedInput.value = String(state.seed);
     rebuild();
-  });
-  document.getElementById("pg-run").addEventListener("click", rebuild);
+  };
+
+  document.getElementById("pg-reseed").addEventListener("click", runFresh);
+  document.getElementById("pg-run").addEventListener("click", runFresh);
 
   renderFields();
   rebuild();

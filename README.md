@@ -245,7 +245,7 @@ Other choices worth naming:
 - **Grid resolution.** The shading grid unions in the exact factors `(n−1)/n`; on a plain 0.05
   grid, `2/3` is absent and the n = 3 optimum would read as 0.65, a grid artifact rather than a result.
 - **Reproducible to the byte.** CI reruns the whole pipeline and fails if any committed *number*
-  (`docs/tables/`, `docs/data.json`) differs, so results cannot silently drift from the code that
+  (`results/tables/`, `web/data.json`) differs, so results cannot silently drift from the code that
   produced them. Figures are excluded from that check on purpose: matplotlib rasterises text via
   the platform font stack, so the same plot built on macOS and on Linux differs in bytes while
   being the same picture.

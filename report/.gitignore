@@ -5,3 +5,6 @@
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# The built report is committed so it can be read on GitHub.
+!report.pdf
